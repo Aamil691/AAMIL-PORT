@@ -1,416 +1,572 @@
-// Mobile Navigation Toggle
-const hamburger = document.querySelector('.hamburger');
-const navMenu = document.querySelector('.nav-menu');
-
-hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navMenu.classList.toggle('active');
-});
-
-// Close mobile menu when clicking on a link
-document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', () => {
-    hamburger.classList.remove('active');
-    navMenu.classList.remove('active');
-}));
-
-// Smooth scrolling for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
-// Navbar background change on scroll
-window.addEventListener('scroll', () => {
-    const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 100) {
-        navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-    } else {
-        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-        navbar.style.boxShadow = 'none';
-    }
-});
-
-// Intersection Observer for scroll animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('fade-in-up');
-        }
-    });
-}, observerOptions);
-
-// Observe all sections for animation
-document.querySelectorAll('section').forEach(section => {
-    observer.observe(section);
-});
-
-// Contact form handling with Formspree
-const contactForm = document.getElementById('contactForm');
-if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
-        // Let Formspree handle the submission
-        // We'll just show a loading state and success message
-        
-        // Get form data for validation
-        const formData = new FormData(this);
-        const name = formData.get('name');
-        const email = formData.get('email');
-        const subject = formData.get('subject');
-        const message = formData.get('message');
-        
-        // Simple validation
-        if (!name || !email || !subject || !message) {
-            e.preventDefault();
-            showNotification('Please fill in all fields', 'error');
-            return;
-        }
-        
-        // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            e.preventDefault();
-            showNotification('Please enter a valid email address', 'error');
-            return;
-        }
-        
-        // Show loading state
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-        submitBtn.disabled = true;
-        
-        // Show success message after a short delay (Formspree will redirect)
-        setTimeout(() => {
-            showNotification('Thank you for your message! I\'ll get back to you soon.', 'success');
-            contactForm.reset();
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-        }, 1000);
-    });
-}
-
-// Notification system
-function showNotification(message, type = 'info') {
-    // Remove existing notifications
-    const existingNotification = document.querySelector('.notification');
-    if (existingNotification) {
-        existingNotification.remove();
-    }
-    
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <div class="notification-content">
-            <span class="notification-message">${message}</span>
-            <button class="notification-close">&times;</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aamil Rais - Frontend Developer Portfolio</title>
+    <meta name="description" content="Aamil Rais's professional frontend developer portfolio. HTML, CSS, JavaScript, Bootstrap projects and contact info.">
+    <meta name="keywords" content="Aamil Rais, Frontend Developer, Web Developer, HTML CSS JS, Bootstrap, Portfolio, Projects">
+    <meta name="author" content="Aamil Rais">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="shortcut icon" href="https://cdn.pixabay.com/photo/2012/04/01/12/39/computer-23232_1280.png" type="image/x-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="google-site-verification" content="GalCBhogc40Ip9eAjRubWuSUyN2R_jaJmBp3QmJREEI" />
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="#home">Aamil Rais</a>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#home" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#about" class="nav-link">About</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#skills" class="nav-link">Skills</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#product-details" class="nav-link">Technologies</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#projects" class="nav-link">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#experience" class="nav-link">Experience</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#contact" class="nav-link">Contact</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
         </div>
-    `;
-    
-    // Add styles
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
-        color: white;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        z-index: 10000;
-        max-width: 400px;
-        animation: slideInRight 0.3s ease;
-    `;
-    
-    // Add close button functionality
-    const closeBtn = notification.querySelector('.notification-close');
-    closeBtn.addEventListener('click', () => {
-        notification.remove();
-    });
-    
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.style.animation = 'slideOutRight 0.3s ease';
-            setTimeout(() => notification.remove(), 300);
-        }
-    }, 5000);
-    
-    // Add to page
-    document.body.appendChild(notification);
-    
-    // Add CSS animations
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        @keyframes slideOutRight {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-        }
-    `;
-    document.head.appendChild(style);
-}
+    </nav>
 
-// Typing effect for hero title
-function typeWriter(element, text, speed = 100) {
-    let i = 0;
-    element.innerHTML = '';
-    
-    function type() {
-        if (i < text.length) {
-            element.innerHTML += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
-        }
-    }
-    
-    type();
-}
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">Hi, I'm <span class="highlight">Aamil Altaf Rais</span></h1>
+                <h2 class="hero-subtitle">WEB DEVELOPER</h2>
+                <p class="hero-description">
+                    A self-motivated and detail-oriented developer passionate about creating 
+                    responsive, user-friendly websites and web applications.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#projects" class="btn btn-primary">View My Work</a>
+                </div>
+                <div class="hero-links">
+                    <a href="https://linkedin.com/in/aamil-rais" target="_blank" class="social-link">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="https://github.com/Aamil691" target="_blank" class="social-link">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="mailto:aamilrais34@gmail.com" class="social-link">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-// Initialize typing effect when page loads
-window.addEventListener('load', () => {
-    const heroTitle = document.querySelector('.hero-title');
-    if (heroTitle) {
-        const originalText = heroTitle.innerHTML;
-        typeWriter(heroTitle, originalText, 50);
-    }
-});
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>
+                        I'm a passionate Front-End Developer with hands-on experience building 
+                        responsive, user-friendly websites and web applications. I have a strong 
+                        foundation in HTML5, CSS3, JavaScript, and Bootstrap.
+                    </p>
+                    <p>
+                        I'm passionate about UI/UX, clean design, and performance optimization. 
+                        I'm adept at collaborating in teams, solving problems creatively, and 
+                        quickly adapting to new technologies.
+                    </p>
+                    <div class="about-details">
+                        <div class="detail-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Mumbai, India</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+91 9356879021</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>aamilrais34@gmail.com</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-// Add active state to navigation based on scroll position
-function updateActiveNavLink() {
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('.nav-link');
-    
-    let current = '';
-    
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-        
-        if (window.scrollY >= (sectionTop - 200)) {
-            current = section.getAttribute('id');
-        }
-    });
-    
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === `#${current}`) {
-            link.classList.add('active');
-        }
-    });
-}
+    <!-- Skills Section -->
+    <section id="skills" class="skills">
+        <div class="container">
+            <h2 class="section-title">Technical Skills</h2>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3>Languages</h3>
+                    <div class="skill-items">
+                        <span class="skill-item">HTML</span>
+                        <span class="skill-item">CSS</span>
+                        <span class="skill-item">JavaScript</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>Frameworks</h3>
+                    <div class="skill-items">
+                        <span class="skill-item">Bootstrap</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>Tools</h3>
+                    <div class="skill-items">
+                        <span class="skill-item">Git</span>
+                        <span class="skill-item">GitHub</span>
+                        <span class="skill-item">VS Code</span>
+                        <span class="skill-item">Figma</span>
+                        <span class="skill-item">Postman</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>Concepts</h3>
+                    <div class="skill-items">
+                        <span class="skill-item">Responsive Design</span>
+                        <span class="skill-item">UI/UX</span>
+                        <span class="skill-item">Cross-Browser Compatibility</span>
+                        <span class="skill-item">Basic SEO</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>Soft Skills</h3>
+                    <div class="skill-items">
+                        <span class="skill-item">Communication</span>
+                        <span class="skill-item">Teamwork</span>
+                        <span class="skill-item">Problem-solving</span>
+                        <span class="skill-item">Adaptability</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>Others</h3>
+                    <div class="skill-items">
+                        <span class="skill-item">Generative AI (ChatGPT)</span>
+                        <span class="skill-item">Java (Basics)</span>
+                        <span class="skill-item">DSA</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-// Update active nav link on scroll
-window.addEventListener('scroll', updateActiveNavLink);
+    <!-- Product Details Section -->
+    <section id="product-details" class="product-details">
+        <div class="container">
+            <h2 class="section-title">Technologies I Use</h2>
+            <p class="section-subtitle">Here are the tools and technologies I use to build modern, responsive websites</p>
+            
+            <div class="tech-categories">
+                <div class="tech-category">
+                    <div class="tech-header">
+                        <i class="fas fa-code"></i>
+                        <h3>WEB Development</h3>
+                    </div>
+                    <div class="tech-items">
+                        <div class="tech-item">
+                            <div class="tech-icon">
+                                <i class="fab fa-html5"></i>
+                            </div>
+                            <div class="tech-info">
+                                <h4>HTML5</h4>
+                                <p>Semantic markup for accessible and SEO-friendly websites</p>
+                            </div>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-icon">
+                                <i class="fab fa-css3-alt"></i>
+                            </div>
+                            <div class="tech-info">
+                                <h4>CSS3</h4>
+                                <p>Advanced styling with Flexbox, Grid, and animations</p>
+                            </div>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-icon">
+                                <i class="fab fa-js-square"></i>
+                            </div>
+                            <div class="tech-info">
+                                <h4>JavaScript (ES6+)</h4>
+                                <p>Modern JavaScript for interactive and dynamic web experiences</p>
+                            </div>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-icon">
+                                <i class="fab fa-bootstrap"></i>
+                            </div>
+                            <div class="tech-info">
+                                <h4>Bootstrap 5</h4>
+                                <p>Responsive framework for rapid UI development</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-// Add CSS for active nav link
-const activeNavStyle = document.createElement('style');
-activeNavStyle.textContent = `
-    .nav-link.active {
-        color: #667eea !important;
-    }
-    
-    .nav-link.active::after {
-        width: 100% !important;
-    }
-`;
-document.head.appendChild(activeNavStyle);
+                <div class="tech-category">
+                    <div class="tech-header">
+                        <i class="fas fa-tools"></i>
+                        <h3>Development Tools</h3>
+                    </div>
+                    <div class="tech-items">
+                        <div class="tech-item">
+                            <div class="tech-icon">
+                                <i class="fab fa-git-alt"></i>
+                            </div>
+                            <div class="tech-info">
+                                <h4>Git & GitHub</h4>
+                                <p>Version control and collaborative development</p>
+                            </div>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <div class="tech-info">
+                                <h4>VS Code</h4>
+                                <p>Powerful code editor with extensions and debugging</p>
+                            </div>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-icon">
+                                <i class="fab fa-figma"></i>
+                            </div>
+                            <div class="tech-info">
+                                <h4>Figma</h4>
+                                <p>Design and prototyping for UI/UX development</p>
+                            </div>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-icon">
+                                <i class="fas fa-paper-plane"></i>
+                            </div>
+                            <div class="tech-info">
+                                <h4>Postman</h4>
+                                <p>API testing and development tool</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-// Lazy loading for images (if you add real images later)
-function lazyLoadImages() {
-    const images = document.querySelectorAll('img[data-src]');
-    
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.classList.remove('lazy');
-                imageObserver.unobserve(img);
-            }
-        });
-    });
-    
-    images.forEach(img => imageObserver.observe(img));
-}
+                <div class="tech-category">
+                    <div class="tech-header">
+                        <i class="fas fa-mobile-alt"></i>
+                        <h3>Design & Responsiveness</h3>
+                    </div>
+                    <div class="tech-items">
+                        <div class="tech-item">
+                            <div class="tech-icon">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <div class="tech-info">
+                                <h4>Mobile-First Design</h4>
+                                <p>Responsive design that works on all devices</p>
+                            </div>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-icon">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <div class="tech-info">
+                                <h4>UI/UX Principles</h4>
+                                <p>User-centered design with modern aesthetics</p>
+                            </div>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="tech-info">
+                                <h4>SEO Optimization</h4>
+                                <p>Search engine friendly code and structure</p>
+                            </div>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-icon">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <div class="tech-info">
+                                <h4>Cross-Browser Support</h4>
+                                <p>Compatible with all modern browsers</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-// Initialize lazy loading
-lazyLoadImages();
+            <div class="tech-highlights">
+                <div class="highlight-card">
+                    <i class="fas fa-rocket"></i>
+                    <h4>Fast Performance</h4>
+                    <p>Optimized code for quick loading and smooth interactions</p>
+                </div>
+                <div class="highlight-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h4>Clean Code</h4>
+                    <p>Well-structured, maintainable, and documented code</p>
+                </div>
+                <div class="highlight-card">
+                    <i class="fas fa-users"></i>
+                    <h4>User Experience</h4>
+                    <p>Intuitive navigation and engaging user interfaces</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-// Add scroll to top button
-function createScrollToTopButton() {
-    const scrollButton = document.createElement('button');
-    scrollButton.innerHTML = '<i class="fas fa-arrow-up"></i>';
-    scrollButton.className = 'scroll-to-top';
-    scrollButton.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        cursor: pointer;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        transition: all 0.3s ease;
-        z-index: 1000;
-    `;
-    
-    // Show/hide button based on scroll position
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 500) {
-            scrollButton.style.display = 'flex';
-        } else {
-            scrollButton.style.display = 'none';
-        }
-    });
-    
-    // Scroll to top functionality
-    scrollButton.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    });
-    
-    // Hover effects
-    scrollButton.addEventListener('mouseenter', () => {
-        scrollButton.style.transform = 'translateY(-3px)';
-        scrollButton.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.2)';
-    });
-    
-    scrollButton.addEventListener('mouseleave', () => {
-        scrollButton.style.transform = 'translateY(0)';
-        scrollButton.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-    });
-    
-    document.body.appendChild(scrollButton);
-}
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <div class="container">
+            <h2 class="section-title">My Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-image">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <div class="project-content">
+                        <h3>Car Dealership Website</h3>
+                        <p>Developed a responsive website for car dealerships using HTML, CSS, JavaScript, and Bootstrap.</p>
+                        <ul class="project-features">
+                            <li>Enabled browsing of 15+ car listings with filtering and search functionality</li>
+                            <li>Integrated contact form, role-based admin dashboard, and vehicle inventory control</li>
+                            <li>Designed mobile-friendly UI and intuitive navigation for better user experience</li>
+                            <li>Real-time tracking and analytics added to support dealership operations</li>
+                        </ul>
+                        <div class="project-links">
+                            <a href="https://github.com/Aamil691/Car-dellership" target="_blank" class="btn btn-outline">
+                                <i class="fab fa-github"></i> GitHub
+                            </a>
+                            <a href="https://aamil691.github.io/Car-dellership" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-external-link-alt"></i> Live Demo
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-// Initialize scroll to top button
-createScrollToTopButton();
+                <div class="project-card">
+                    <div class="project-image">
+                        <i class="fas fa-motorcycle"></i>
+                    </div>
+                    <div class="project-content">
+                        <h3>RideExpress Bike Rental Website</h3>
+                        <p>Designed an online bike rental system for booking short- and long-term rentals.</p>
+                        <ul class="project-features">
+                            <li>Implemented secure login, live reservation flow, and admin management panel</li>
+                            <li>Users can check availability and make bookings with real-time confirmation</li>
+                            <li>Optimized for mobile devices and smooth user interface with Bootstrap</li>
+                            <li>Focused on clean structure and practical application features</li>
+                        </ul>
+                        <div class="project-links">
+                            <a href="https://github.com/Aamil691/Bike-rental" target="_blank" class="btn btn-outline">
+                                <i class="fab fa-github"></i> GitHub
+                            </a>
+                            <a href="https://aamil691.github.io/Bike-rental" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-external-link-alt"></i> Live Demo
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-// Add loading animation
-window.addEventListener('load', () => {
-    document.body.classList.add('loaded');
-});
+                <div class="project-card">
+                    <div class="project-image">
+                        <i class="fas fa-ice-cream"></i>
+                    </div>
+                    <div class="project-content">
+                        <h3>Ice Cream Parlour Website</h3>
+                        <p>Created a visually rich and interactive website for an ice cream parlour.</p>
+                        <ul class="project-features">
+                            <li>Showcases flavors, daily offers, menu, photo gallery, and contact/order form</li>
+                            <li>Designed with vibrant visuals and responsive layout using vanilla JavaScript and CSS3</li>
+                            <li>Mobile-first design ensures usability across all devices</li>
+                            <li>Built to reflect a real business use-case for small vendors</li>
+                        </ul>
+                        <div class="project-links">
+                            <a href="https://github.com/Aamil691/Aamil-Rais-01" target="_blank" class="btn btn-outline">
+                                <i class="fab fa-github"></i> GitHub
+                            </a>
+                            <a href="https://aamil691.github.io/Aamil-Rais-01" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-external-link-alt"></i> Live Demo
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-// Add CSS for loading state
-const loadingStyle = document.createElement('style');
-loadingStyle.textContent = `
-    body:not(.loaded) {
-        overflow: hidden;
-    }
-    
-    body:not(.loaded)::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        z-index: 10000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        animation: fadeOut 0.5s ease 1s forwards;
-    }
-    
-    body:not(.loaded)::after {
-        content: 'Aamil Rais';
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: white;
-        font-size: 2rem;
-        font-weight: 700;
-        z-index: 10001;
-        animation: fadeOut 0.5s ease 1s forwards;
-    }
-    
-    @keyframes fadeOut {
-        to {
-            opacity: 0;
-            visibility: hidden;
-        }
-    }
-`;
-document.head.appendChild(loadingStyle);
+                <div class="project-card">
+                    <div class="project-image">
+                        <i class="fas fa-shoe-prints"></i>
+                    </div>
+                    <div class="project-content">
+                        <h3>Shoes E-Commerce Website</h3>
+                        <p>Developed a static e-commerce frontend with product catalog for shoes.</p>
+                        <ul class="project-features">
+                            <li>Product grid supports category filtering and stylish product card layout</li>
+                            <li>Included shopping cart UI and modern interface for browsing items</li>
+                            <li>Ensured full mobile responsiveness using CSS Grid/Flexbox</li>
+                            <li>Project showcases strong attention to layout and user interaction</li>
+                        </ul>
+                        <div class="project-links">
+                            <a href="https://github.com/Aamil691/Aamil-Rais" target="_blank" class="btn btn-outline">
+                                <i class="fab fa-github"></i> GitHub
+                            </a>
+                            <a href="https://aamil691.github.io/Aamil-Rais" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-external-link-alt"></i> Live Demo
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-// Performance optimization: Debounce scroll events
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
+    <!-- Experience Section -->
+    <section id="experience" class="experience">
+        <div class="container">
+            <h2 class="section-title">Experience & Education</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Fresher / Entry-Level Frontend Developer</h3>
+                        <p class="timeline-company">Self-Employed</p>
+                        <p class="timeline-date">2024 - Present</p>
+                        <ul>
+                            <li>Completed diploma in Information Technology and full stack training from Coding Ninjas</li>
+                            <li>Strong practical knowledge of frontend tools and technologies</li>
+                            <li>Built multiple real-world projects during training and self-learning</li>
+                            <li>Passionate about solving problems and improving frontend performance</li>
+                        </ul>
+                    </div>
+                </div>
 
-// Apply debouncing to scroll events
-const debouncedUpdateActiveNav = debounce(updateActiveNavLink, 100);
-window.addEventListener('scroll', debouncedUpdateActiveNav);
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Full Stack Web Development Training</h3>
+                        <p class="timeline-company">Coding Ninjas</p>
+                        <p class="timeline-date">Oct 2024 - Present</p>
+                        <ul>
+                            <li>Modules: Frontend Development, Java (DSA), Generative AI Tools</li>
+                        </ul>
+                    </div>
+                </div>
 
-// Add keyboard navigation support
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        // Close mobile menu
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
-    }
-});
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Diploma in Information Technology</h3>
+                        <p class="timeline-company">Shivaji Rao S. Jondhle Polytechnic College, Asangaon</p>
+                        <p class="timeline-date">Expected 2025</p>
+                        <p>Board of Technical Education, Maharashtra</p>
+                        <p>Aggregate: 68.50%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-// Add focus management for accessibility
-document.querySelectorAll('a, button, input, textarea').forEach(element => {
-    element.addEventListener('focus', () => {
-        element.style.outline = '2px solid #667eea';
-        element.style.outlineOffset = '2px';
-    });
-    
-    element.addEventListener('blur', () => {
-        element.style.outline = 'none';
-    });
-});
+    <!-- Achievements Section -->
+    <section class="achievements">
+        <div class="container">
+            <h2 class="section-title">Achievements</h2>
+            <div class="achievements-grid">
+                <div class="achievement-card">
+                    <i class="fas fa-trophy"></i>
+                    <h3>Top Performer</h3>
+                    <p>Frontend Development (Coding Ninjas)</p>
+                </div>
+                <div class="achievement-card">
+                    <i class="fas fa-code"></i>
+                    <h3>Problem Solver</h3>
+                    <p>Solved 300+ problems on Coding Ninjas platform</p>
+                </div>
+                <div class="achievement-card">
+                    <i class="fas fa-certificate"></i>
+                    <h3>Certifications</h3>
+                    <p>HTML, CSS, JavaScript, and Full Stack</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-console.log('Portfolio website loaded successfully! 🚀');
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">Get In Touch</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h3>Email</h3>
+                            <p>aamilrais34@gmail.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h3>Phone</h3>
+                            <p>+91 9356879021</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h3>Location</h3>
+                            <p>Mumbai, India</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fab fa-linkedin"></i>
+                        <div>
+                            <h3>LinkedIn</h3>
+                            <p><a href="https://www.linkedin.com/in/aamil-rais-a15713331?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" style="color: #e0e0e0; text-decoration: none;">linkedin.com/in/aamil-rais</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2026 Aamil Altaf Rais. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="https://linkedin.com/in/aamil-rais" target="_blank">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="https://github.com/Aamil691" target="_blank">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="mailto:aamilrais34@gmail.com">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
